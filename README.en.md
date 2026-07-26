@@ -230,6 +230,8 @@ In the Claude Code **input box** (starts with `/`):
 | `/plugin marketplace add (local folder path)` | Register a downloaded folder as a marketplace (for editing) |
 | `/plugin install sodam-persona@sodam-persona` | Install the plugin |
 | `/reload-plugins` | Apply changes immediately |
+| `/sodam-persona:create` | (plugin's own command) Interview-style creation of a new domain persona — suggests recommended trigger words, then syncs every related file |
+| `/sodam-persona:edit` | (plugin's own command) Interview-style add/edit/remove of trigger words for any existing persona (base 15 + 4 domains + any you created) |
 
 In the **terminal** (`claude plugin ...`):
 
@@ -266,6 +268,9 @@ SoDam-Persona/
     │   ├── inject-core.js / inject-marker.js  (injection scripts)
     │   ├── persona_core.md                (personality/strength/15 perspectives/triggers/disclaimer — source)
     │   └── persona_marker.txt             (per-input self-check marker)
+    ├── commands/                        ← plugin's own commands (interview-style)
+    │   ├── create.md                      (create a new persona)
+    │   └── edit.md                        (edit an existing persona's trigger words)
     ├── skills/                          ← on-demand (7)
     │   ├── persona-triggers/  persona-format/  persona-safety/
     │   └── persona-investor/  persona-lawyer/  persona-accountant/  persona-marketer/

@@ -607,6 +607,18 @@ checked.</li>
 <td><code>/reload-plugins</code></td>
 <td>Apply changes immediately</td>
 </tr>
+<tr>
+<td><code>/sodam-persona:create</code></td>
+<td>(plugin's own command) Interview-style creation of a new domain
+persona — suggests recommended trigger words, then syncs every related
+file</td>
+</tr>
+<tr>
+<td><code>/sodam-persona:edit</code></td>
+<td>(plugin's own command) Interview-style add/edit/remove of trigger
+words for any existing persona (base 15 + 4 domains + any you
+created)</td>
+</tr>
 </tbody>
 </table>
 <p>In the <strong>terminal</strong>
@@ -673,6 +685,9 @@ locations</h2>
     │   ├── inject-core.js / inject-marker.js  (injection scripts)
     │   ├── persona_core.md                (personality/strength/15 perspectives/triggers/disclaimer — source)
     │   └── persona_marker.txt             (per-input self-check marker)
+    ├── commands/                        ← plugin&#39;s own commands (interview-style)
+    │   ├── create.md                      (create a new persona)
+    │   └── edit.md                        (edit an existing persona&#39;s trigger words)
     ├── skills/                          ← on-demand (7)
     │   ├── persona-triggers/  persona-format/  persona-safety/
     │   └── persona-investor/  persona-lawyer/  persona-accountant/  persona-marketer/
