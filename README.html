@@ -364,6 +364,14 @@ href="https://nodejs.org">nodejs.org</a> LTS 설치</td>
 <td><a href="https://git-scm.com">git-scm.com</a>. <strong>단순 사용만
 하면 Git 불필요</strong></td>
 </tr>
+<tr>
+<td><strong>pandoc</strong> <em>(선택, 문서 편집자만)</em></td>
+<td>README/GUIDE <code>.md</code>를 <code>.html</code>로
+재생성(<code>build-docs.mjs</code>)할 때만</td>
+<td><code>pandoc --version</code></td>
+<td><a href="https://pandoc.org/installing.html">pandoc.org</a>.
+<strong>문서를 안 고치면 불필요</strong></td>
+</tr>
 </tbody>
 </table>
 <blockquote>
@@ -628,6 +636,8 @@ hook 코드에 <code>eval</code>/<code>exec</code>/네트워크 0건 · JSON
 ├── GUIDE.md  / GUIDE.en.md             ← 왕초보 가이드·FAQ (한/영)
 ├── LICENSE                             ← Apache-2.0 전문
 ├── validate.mjs                        ← 정합성 자동 검사기(의존성 0)
+├── build-docs.mjs                      ← README/GUIDE(.md) → .html 재생성기 (pandoc 필요, 문서 편집자 전용)
+├── doc-theme.html                      ← build-docs.mjs가 쓰는 HTML 테마(폰트·다크모드 CSS)
 ├── .github/workflows/validate.yml      ← 올릴 때마다 자동 검사(CI)
 ├── .claude-plugin/marketplace.json     ← 마켓플레이스 정의
 └── sodam-persona/                      ← 실제 플러그인 (이 저장소의 유일한 플러그인)
