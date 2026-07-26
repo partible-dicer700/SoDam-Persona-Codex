@@ -731,6 +731,31 @@ files</li>
 </details>
 
 <details>
+<summary><b>2026-07 update — persona create/edit commands (click to expand)</b></summary>
+
+<ul>
+<li><strong><code>/sodam-persona:create</code></strong>: interview-style
+creation of a new domain persona. The AI suggests trigger words first →
+files are only touched after you confirm, with every related file synced
+automatically</li>
+<li><strong><code>/sodam-persona:edit</code></strong>: interview-style
+add/edit/remove of trigger words for any existing persona (base 15
+perspectives + 4 domains + anything you created)</li>
+<li><strong>Stronger input validation</strong>: <code>/create</code>'s
+English-slug answer is now format-checked (prevents path
+manipulation)</li>
+<li><strong>Doc reproducibility</strong>: <code>build-docs.mjs</code>
+fixes README/GUIDE (.md) → <code>.html</code> regeneration into a single
+repeatable command</li>
+<li><strong>Wider consistency checks</strong>: <code>validate.mjs</code>
+now also checks the English docs (README.en/GUIDE.en) and HTML sync</li>
+<li><strong>Safer hooks</strong>: if a source file is missing, hooks
+degrade safely to an empty value instead of crashing (just print a
+diagnostic)</li>
+</ul>
+</details>
+
+<details>
 <summary><b>Design principles (click to expand)</b></summary>
 
 <ul>

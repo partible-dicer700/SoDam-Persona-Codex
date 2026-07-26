@@ -298,6 +298,18 @@ SoDam-Persona/
 </details>
 
 <details>
+<summary><b>2026-07 업데이트 — 페르소나 생성/편집 명령어 (클릭해서 펼치기)</b></summary>
+
+- **`/sodam-persona:create`**: 인터뷰 방식으로 새 도메인 페르소나 생성. 트리거 단어를 AI가 먼저 추천 → 확인 후에만 파일 반영, 관련 파일 전부 자동 동기화
+- **`/sodam-persona:edit`**: 기존 페르소나(기본 15관점 + 도메인 4종 + 새로 만든 것 전부)의 트리거 단어를 인터뷰 방식으로 추가·수정·제거
+- **입력값 검증 강화**: `/create`의 영문 슬러그 답변에 형식 검증 추가(경로 조작 방지)
+- **문서 재현성**: `build-docs.mjs`로 README/GUIDE(.md) → `.html` 재생성을 고정된 명령으로 확립
+- **정합성 검사 확장**: `validate.mjs`가 영문 문서(README.en/GUIDE.en)와 HTML 동기화까지 함께 확인
+- **hook 안전성 강화**: 정본 파일이 없어도 크래시 대신 안전하게 빈 값으로 처리(진단 메시지만 출력)
+
+</details>
+
+<details>
 <summary><b>구성 원칙 (클릭해서 펼치기)</b></summary>
 
 - **정본은 코어 한 곳**(`persona_core.md`) — 스킬은 확장 상세만, 중복 서술은 토큰 절약을 위한 의도된 4중 반복
