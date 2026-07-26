@@ -230,6 +230,8 @@ Claude Code **입력창**에서 (슬래시 `/`로 시작):
 | `/plugin marketplace add (로컬폴더경로)` | 내려받은 폴더를 마켓플레이스로 등록(수정용) |
 | `/plugin install sodam-persona@sodam-persona` | 플러그인 설치 |
 | `/reload-plugins` | 변경 사항 즉시 적용 |
+| `/sodam-persona:create` | (플러그인 자체 명령) 인터뷰 방식으로 새 도메인 페르소나 생성 — 추천 트리거 단어 제안 후 관련 파일 전부 동기화 |
+| `/sodam-persona:edit` | (플러그인 자체 명령) 인터뷰 방식으로 기존 페르소나(기본 15관점+도메인 4종+새로 만든 것)의 트리거 단어 추가·수정·제거 |
 
 **터미널**에서 (`claude plugin ...`):
 
@@ -266,6 +268,9 @@ SoDam-Persona/
     │   ├── inject-core.js / inject-marker.js  (주입 스크립트)
     │   ├── persona_core.md                (성격·강도·15관점·트리거·면책 정본)
     │   └── persona_marker.txt             (매 입력 자가점검 마커)
+    ├── commands/                        ← 플러그인 자체 명령 (인터뷰 방식)
+    │   ├── create.md                      (새 페르소나 생성)
+    │   └── edit.md                        (기존 페르소나 트리거 단어 편집)
     ├── skills/                          ← 상황별 (7개)
     │   ├── persona-triggers/  persona-format/  persona-safety/
     │   └── persona-investor/  persona-lawyer/  persona-accountant/  persona-marketer/
