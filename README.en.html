@@ -374,6 +374,14 @@ the repo)</td>
 <td><a href="https://git-scm.com">git-scm.com</a>. <strong>Not needed
 for plain use</strong></td>
 </tr>
+<tr>
+<td><strong>pandoc</strong> <em>(optional, doc editors only)</em></td>
+<td>Only to regenerate README/GUIDE <code>.html</code> from
+<code>.md</code> (<code>build-docs.mjs</code>)</td>
+<td><code>pandoc --version</code></td>
+<td><a href="https://pandoc.org/installing.html">pandoc.org</a>.
+<strong>Not needed unless you edit the docs</strong></td>
+</tr>
 </tbody>
 </table>
 <blockquote>
@@ -654,6 +662,8 @@ locations</h2>
 ├── GUIDE.md  / GUIDE.en.md             ← beginner guide &amp; FAQ (KO/EN)
 ├── LICENSE                             ← full Apache-2.0 text
 ├── validate.mjs                        ← consistency checker (zero deps)
+├── build-docs.mjs                      ← regenerates README/GUIDE .html from .md (needs pandoc, doc editors only)
+├── doc-theme.html                      ← HTML theme (fonts/dark-mode CSS) used by build-docs.mjs
 ├── .github/workflows/validate.yml      ← auto-check on every push (CI)
 ├── .claude-plugin/marketplace.json     ← marketplace definition
 └── sodam-persona/                      ← the actual plugin (the only one here)

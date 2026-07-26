@@ -49,6 +49,8 @@ const KEY_FILES = [
   'sodam-persona/reference/test_scenarios.md',
   'README.md',
   'GUIDE.md',
+  'README.en.md',
+  'GUIDE.en.md',
   'sodam-persona/.claude-plugin/plugin.json',
   '.claude-plugin/marketplace.json',
 ];
@@ -59,6 +61,7 @@ const COUNT_PATTERNS = [
   /다관점 판단 \((\d+)개\)/g,  // format "(N개)"
   /(\d+)개 관점/g,             // README "N개 관점"
   /(\d+)개 도메인 관점/g,      // core "N개 도메인 관점"
+  /(\d+)\s*perspectives/gi,    // README.en/GUIDE.en "N perspectives"
 ];
 for (const f of KEY_FILES) {
   if (!existsSync(P(f))) { err(`핵심 파일 없음: ${f}`); continue; }
@@ -108,6 +111,26 @@ const guideSkill = guide.match(/Skills? ?\((\d+)\)/);
 if (guideSkill && +guideSkill[1] !== nSkills)
   err(`GUIDE 스킬 수(${guideSkill[1]}) ≠ 실제(${nSkills})`);
 
+// ── 4-1) 영문 문서(README.en/GUIDE.en) 스킬 수 + 트리거 패턴 수 표기 (2026-07-26 추가) ──
+// 근거: validate.mjs가 기존엔 한글 README.md/GUIDE.md만 검사 → 영문 문서는 수치가
+// 어긋나도 CI가 못 잡음(실측 확인). "Skills (N)" 표기와 "N patterns" 표기를 교차검사.
+for (const f of ['README.en.md', 'GUIDE.en.md']) {
+  const text = read(f);
+  const skillMatch = text.match(/Skills? ?\((\d+)\)/);
+  if (skillMatch && +skillMatch[1] !== nSkills)
+    err(`${f} 스킬 수(${skillMatch[1]}) ≠ 실제(${nSkills})`);
+  const patternMatchEn = text.match(/(\d+)\s*patterns/i);
+  if (patternMatchEn && +patternMatchEn[1] !== uniqLetters.length)
+    err(`${f} 패턴 수(${patternMatchEn[1]}) ≠ 실제(${uniqLetters.length})`);
+}
+// 한글 문서의 "트리거 패턴 20개(A~T)" 표기도 동일 기준으로 교차검사 (기존엔 미검사였음)
+for (const f of ['README.md', 'GUIDE.md']) {
+  const text = read(f);
+  const patternMatchKo = text.match(/트리거 패턴 (\d+)개/);
+  if (patternMatchKo && +patternMatchKo[1] !== uniqLetters.length)
+    err(`${f} 패턴 수(${patternMatchKo[1]}) ≠ 실제(${uniqLetters.length})`);
+}
+
 // ── 5) 도메인 페르소나 배선 (core 파일맵 · marker 파일맵에 모두 존재) ────
 const DOMAINS = ['persona-investor', 'persona-lawyer', 'persona-accountant', 'persona-marketer'];
 const core = read('sodam-persona/hooks/persona_core.md');
@@ -143,6 +166,28 @@ const DISCLAIMER_CHECKS = [
 for (const [f, kw] of DISCLAIMER_CHECKS) {
   if (!existsSync(P(f))) { err(`면책 검사 대상 파일 없음: ${f}`); continue; }
   if (!read(f).includes(kw)) err(`면책 강제 누락 (${f}): "${kw}" 문자열 없음`);
+}
+
+// ── 8) HTML 4개 동기화 경고 (소프트 — exit code에 영향 없음, 2026-07-26 추가) ──
+// 근거: HTML은 build-docs.mjs(pandoc)로 md에서 재생성되는 산출물이라 정본이 아님.
+// 재생성을 잊고 md만 고치면 배포 문서가 옛 수치로 남는 것을 "경고"로만 알린다.
+const warnings = [];
+const HTML_FILES = ['README.html', 'GUIDE.html', 'README.en.html', 'GUIDE.en.html'];
+for (const f of HTML_FILES) {
+  if (!existsSync(P(f))) continue;
+  const text = read(f);
+  const nums = new Set();
+  for (const re of [/(\d+)\s*명/g, /(\d+)\s*관점/g, /(\d+)개 관점/g, /(\d+)\s*perspectives/gi]) {
+    for (const m of text.matchAll(re)) nums.add(+m[1]);
+  }
+  for (const n of nums) if (n !== N) warnings.push(`${f}: 관점 수 "${n}" ≠ 실제(${N}) — build-docs.mjs 재생성 필요 의심`);
+  const skillMatch = text.match(/Skills? ?\((\d+)\)/);
+  if (skillMatch && +skillMatch[1] !== nSkills)
+    warnings.push(`${f}: 스킬 수 "${skillMatch[1]}" ≠ 실제(${nSkills}) — build-docs.mjs 재생성 필요 의심`);
+}
+if (warnings.length) {
+  console.log(`⚠️  HTML 동기화 경고 ${warnings.length}건 (실패 아님, node build-docs.mjs로 해결):`);
+  for (const w of warnings) console.log(`  · ${w}`);
 }
 
 // ── 결과 ────────────────────────────────────────────────────────────────

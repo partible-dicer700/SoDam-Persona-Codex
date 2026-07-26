@@ -128,13 +128,17 @@ claude plugin install sodam-persona@sodam-persona
 **성격·규칙을 바꾸려면** → `sodam-persona/hooks/persona_core.md` 수정 (항상 켜지는 정본).
 **트리거 단어를 추가하려면** → 같은 `persona_core.md`의 트리거 목록에 추가 (정본은 코어 한 곳).
 **특정 전문가 상세를 바꾸려면** → `sodam-persona/skills/persona-(이름)/SKILL.md` 수정.
+**README.md/GUIDE.md(또는 .en 버전) 본문을 바꾸려면** → 해당 `.md` 수정 후 `node build-docs.mjs`로 HTML 4개를 재생성 (HTML은 md에서 자동 생성되는 산출물이라 직접 고치지 않음. pandoc 필요 — 문서를 고치는 사람만 설치하면 됨, 플러그인 "사용"에는 불필요).
 
 수정 후 **항상** 이 순서를 지키세요:
 ```bash
 # 1) 저장소 폴더에서 파일 수정
 
-# 2) 정합성 검사 (권장 — 관점 수·스킬 수·면책 존재 자동 확인)
+# 2) 정합성 검사 (권장 — 관점 수·스킬 수·패턴 수·면책 존재 자동 확인, 영문 문서도 검사)
 node validate.mjs
+
+# 2-1) README/GUIDE 본문을 고쳤다면 HTML도 재생성 (pandoc 필요)
+node build-docs.mjs
 
 # 3) 캐시에 반영
 claude plugin marketplace update sodam-persona

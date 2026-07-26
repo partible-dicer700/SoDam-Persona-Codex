@@ -71,6 +71,7 @@ You need the following on a new computer. **This repo is Public, so it installs 
 | **Claude Code** | The host the plugin installs into | `claude --version` | Install at [claude.com/claude-code](https://claude.com/claude-code) |
 | **Node.js** | Used by the plugin's hooks | `node --version` | Usually required by Claude Code. Otherwise install LTS from [nodejs.org](https://nodejs.org) |
 | **Git** *(optional)* | Only if you want to **modify** the content (to clone the repo) | `git --version` | [git-scm.com](https://git-scm.com). **Not needed for plain use** |
+| **pandoc** *(optional, doc editors only)* | Only to regenerate README/GUIDE `.html` from `.md` (`build-docs.mjs`) | `pandoc --version` | [pandoc.org](https://pandoc.org/installing.html). **Not needed unless you edit the docs** |
 
 > ✅ **For plain use** you only need Claude Code + Node.js. (Method 4 below installs directly, no Git/download required.)
 > OS: Windows / macOS / Linux all supported.
@@ -254,6 +255,8 @@ SoDam-Persona/
 ├── GUIDE.md  / GUIDE.en.md             ← beginner guide & FAQ (KO/EN)
 ├── LICENSE                             ← full Apache-2.0 text
 ├── validate.mjs                        ← consistency checker (zero deps)
+├── build-docs.mjs                      ← regenerates README/GUIDE .html from .md (needs pandoc, doc editors only)
+├── doc-theme.html                      ← HTML theme (fonts/dark-mode CSS) used by build-docs.mjs
 ├── .github/workflows/validate.yml      ← auto-check on every push (CI)
 ├── .claude-plugin/marketplace.json     ← marketplace definition
 └── sodam-persona/                      ← the actual plugin (the only one here)

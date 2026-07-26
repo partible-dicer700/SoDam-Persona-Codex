@@ -71,6 +71,7 @@
 | **Claude Code** | 플러그인이 설치되는 본체 | `claude --version` | [claude.com/claude-code](https://claude.com/claude-code) 에서 설치 |
 | **Node.js** | 플러그인의 hook이 사용 | `node --version` | Claude Code가 보통 함께 요구. 없으면 [nodejs.org](https://nodejs.org) LTS 설치 |
 | **Git** *(선택)* | 내용을 **수정**하려면 저장소를 복제(clone)할 때만 | `git --version` | [git-scm.com](https://git-scm.com). **단순 사용만 하면 Git 불필요** |
+| **pandoc** *(선택, 문서 편집자만)* | README/GUIDE `.md`를 `.html`로 재생성(`build-docs.mjs`)할 때만 | `pandoc --version` | [pandoc.org](https://pandoc.org/installing.html). **문서를 안 고치면 불필요** |
 
 > ✅ **그냥 쓰기만 하면** Claude Code + Node.js만 있으면 됩니다. (아래 4번 방법은 Git·다운로드 없이 바로 설치)
 > 운영체제(OS): Windows / macOS / Linux 모두 지원.
@@ -254,6 +255,8 @@ SoDam-Persona/
 ├── GUIDE.md  / GUIDE.en.md             ← 왕초보 가이드·FAQ (한/영)
 ├── LICENSE                             ← Apache-2.0 전문
 ├── validate.mjs                        ← 정합성 자동 검사기(의존성 0)
+├── build-docs.mjs                      ← README/GUIDE(.md) → .html 재생성기 (pandoc 필요, 문서 편집자 전용)
+├── doc-theme.html                      ← build-docs.mjs가 쓰는 HTML 테마(폰트·다크모드 CSS)
 ├── .github/workflows/validate.yml      ← 올릴 때마다 자동 검사(CI)
 ├── .claude-plugin/marketplace.json     ← 마켓플레이스 정의
 └── sodam-persona/                      ← 실제 플러그인 (이 저장소의 유일한 플러그인)

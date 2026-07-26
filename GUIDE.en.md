@@ -128,13 +128,17 @@ Then **restart**. (You can also check that the cache-folder files contain your e
 **To change personality/rules** → edit `sodam-persona/hooks/persona_core.md` (the always-on source).
 **To add trigger words** → add to the trigger list in the same `persona_core.md` (single source in the core).
 **To change a specific expert's detail** → edit `sodam-persona/skills/persona-(name)/SKILL.md`.
+**To change README.md/GUIDE.md (or .en) body text** → edit the `.md`, then run `node build-docs.mjs` to regenerate all 4 HTML files (HTML is a generated artifact, never edited directly. Requires pandoc — only doc editors need it, not plugin users).
 
 After editing, **always** follow this order:
 ```bash
 # 1) Edit files in the repo folder
 
-# 2) Consistency check (recommended — auto-verifies perspective/skill counts and disclaimer)
+# 2) Consistency check (recommended — auto-verifies perspective/pattern/skill counts and disclaimer, English docs too)
 node validate.mjs
+
+# 2-1) If you edited README/GUIDE body text, regenerate HTML too (needs pandoc)
+node build-docs.mjs
 
 # 3) Reflect into the cache
 claude plugin marketplace update sodam-persona

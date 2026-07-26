@@ -444,25 +444,33 @@ edit the content</h2>
 <strong>To add trigger words</strong> → add to the trigger list in the
 same <code>persona_core.md</code> (single source in the core).
 <strong>To change a specific expert's detail</strong> → edit
-<code>sodam-persona/skills/persona-(name)/SKILL.md</code>.</p>
+<code>sodam-persona/skills/persona-(name)/SKILL.md</code>. <strong>To
+change README.md/GUIDE.md (or .en) body text</strong> → edit the
+<code>.md</code>, then run <code>node build-docs.mjs</code> to
+regenerate all 4 HTML files (HTML is a generated artifact, never edited
+directly. Requires pandoc — only doc editors need it, not plugin
+users).</p>
 <p>After editing, <strong>always</strong> follow this order:</p>
 <div class="sourceCode" id="cb6"><pre
 class="sourceCode bash"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 1) Edit files in the repo folder</span></span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="co"># 2) Consistency check (recommended — auto-verifies perspective/skill counts and disclaimer)</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="co"># 2) Consistency check (recommended — auto-verifies perspective/pattern/skill counts and disclaimer, English docs too)</span></span>
 <span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="ex">node</span> validate.mjs</span>
 <span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="co"># 3) Reflect into the cache</span></span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="ex">claude</span> plugin marketplace update sodam-persona</span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a><span class="ex">claude</span> plugin uninstall sodam-persona@sodam-persona</span>
-<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a><span class="ex">claude</span> plugin install sodam-persona@sodam-persona</span>
-<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a><span class="co"># 4) Restart Claude Code</span></span>
-<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a><span class="co"># 5) Push to GitHub (⚠️ add ONLY the files you changed — do NOT use &#39;git add -A&#39;)</span></span>
-<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> add sodam-persona/hooks/persona_core.md   <span class="co"># example: only the files you actually changed</span></span>
-<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> commit <span class="at">-m</span> <span class="st">&quot;fix: summary of change&quot;</span></span>
-<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> push</span></code></pre></div>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="co"># 2-1) If you edited README/GUIDE body text, regenerate HTML too (needs pandoc)</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="ex">node</span> build-docs.mjs</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a><span class="co"># 3) Reflect into the cache</span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a><span class="ex">claude</span> plugin marketplace update sodam-persona</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a><span class="ex">claude</span> plugin uninstall sodam-persona@sodam-persona</span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a><span class="ex">claude</span> plugin install sodam-persona@sodam-persona</span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a><span class="co"># 4) Restart Claude Code</span></span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a><span class="co"># 5) Push to GitHub (⚠️ add ONLY the files you changed — do NOT use &#39;git add -A&#39;)</span></span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> add sodam-persona/hooks/persona_core.md   <span class="co"># example: only the files you actually changed</span></span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> commit <span class="at">-m</span> <span class="st">&quot;fix: summary of change&quot;</span></span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> push</span></code></pre></div>
 <blockquote>
 <p>⚠️ <strong>Why avoid <code>git add -A</code>?</strong> It can sweep
 in <strong>unintended files</strong> (temporary files left by other
