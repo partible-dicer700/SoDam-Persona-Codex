@@ -6,8 +6,7 @@
 
 > **Who is this for?**
 > Written so that even people **new to computers, AI, and GitHub** can follow along — every term is explained.
-> For the beginner-friendly guide, troubleshooting, and FAQ, see **[GUIDE.en.md](./GUIDE.en.md)**.
-> Korean docs: **[README.md](./README.md)** · **[GUIDE.md](./GUIDE.md)**
+> Korean docs: **[README.md](./README.md)**
 
 > **License** · Apache-2.0 (commercial use allowed · see [Section 17](#17-license--copyright--commercial-use))  ·  **Public** repository  ·  © 2026 SoDam AI Studio
 
@@ -59,6 +58,12 @@
 | **repository (repo)** | An online storage for code/files (here, GitHub's `SoDam-Persona`) |
 | **cache** | A **copy kept for speed** (the installed version lives here) |
 | **restart** | Fully quitting and relaunching Claude Code (hooks are read only at startup) |
+| **context** | The range of conversation/info the AI holds at once |
+| **compaction** | Auto-summarizing/compressing when the conversation gets long (the marker restores the persona) |
+| **JSON** | A format for writing settings; one wrong bracket/comma breaks the whole file |
+| **L0–L3** | Answer-strength levels (L0 chat → L3 serious work like security/money/deploy) |
+| **disclaimer** | A liability-limiting note like "for reference; consult a professional" |
+| **trigger** | A word that switches on the related perspective/skill |
 
 ---
 
@@ -71,10 +76,11 @@ You need the following on a new computer. **This repo is Public, so it installs 
 | **Claude Code** | The host the plugin installs into | `claude --version` | Install at [claude.com/claude-code](https://claude.com/claude-code) |
 | **Node.js** | Used by the plugin's hooks | `node --version` | Usually required by Claude Code. Otherwise install LTS from [nodejs.org](https://nodejs.org) |
 | **Git** *(optional)* | Only if you want to **modify** the content (to clone the repo) | `git --version` | [git-scm.com](https://git-scm.com). **Not needed for plain use** |
-| **pandoc** *(optional, doc editors only)* | Only to regenerate README/GUIDE `.html` from `.md` (`build-docs.mjs`) | `pandoc --version` | [pandoc.org](https://pandoc.org/installing.html). **Not needed unless you edit the docs** |
+| **pandoc** *(optional, doc editors only)* | Only to regenerate README `.html` from `.md` (`build-docs.mjs`) | `pandoc --version` | [pandoc.org](https://pandoc.org/installing.html). **Not needed unless you edit the docs** |
 
 > ✅ **For plain use** you only need Claude Code + Node.js. (Method 4 below installs directly, no Git/download required.)
 > OS: Windows / macOS / Linux all supported.
+> **Environment variables: none.** This plugin never uses `.env` or environment variables — there is nothing to configure.
 
 ---
 
@@ -122,14 +128,22 @@ In the Claude Code input box:
 ```
 Or **fully quit and relaunch** Claude Code. (Hooks work from the new session.)
 
-**Step 5 — Verify**
+**Step 5 — Verify (make sure it's installed correctly)**
 ```
 /plugin
 ```
 If `sodam-persona` appears in the list, install is complete. (In a terminal: `claude plugin list`.)
 
+For extra confidence:
+```bash
+claude plugin details sodam-persona   # should show Skills (7) + Hooks (2)
+claude plugin validate (repo path)/sodam-persona   # validates the plugin format itself
+```
+Confirm actual behavior **after a restart**, via conversation — ask normally without triggers (check the careful tone) → `Review this VAT filing` (tax skill + a disclaimer note at the end means it's working).
+
 > ⚠️ **Order pitfall**: If you previously uninstalled it, the marketplace registration is also gone, so `install` says *"Marketplace not found."*
 > → Always follow **`marketplace add` (register) → `install` → `/reload-plugins` (apply)**.
+> ⚠️ **Can't install straight from GitHub?** Double-check the exact repo name (`sodam-ai/SoDam-Persona`, case-sensitive) and your internet connection (company/school networks may block GitHub). If it still fails, clone the repo or download the ZIP and run `/plugin marketplace add (folder path)` on that local folder.
 
 ---
 
@@ -175,6 +189,39 @@ The persona has two parts.
 ```
 
 > ⚠️ **Most common pitfall**: after editing plugin files, if you **skip reinstall (or marketplace update)**, the old version stays on — because the installed copy is a "cache." See [Section 14](#14-troubleshooting).
+
+### How to edit the content (maintenance / build / deploy)
+
+- **To change personality/rules** → edit `sodam-persona/hooks/persona_core.md` (the always-on source)
+- **To add trigger words** → add to the trigger list in the same `persona_core.md` (single source in the core)
+- **To change a specific expert's detail** → edit `sodam-persona/skills/persona-(name)/SKILL.md`
+- **To change README.md (or .en) body text** → edit the `.md`, then run `node build-docs.mjs` to regenerate the HTML (HTML is a generated artifact, never edited directly. Requires pandoc — only doc editors need it, not plugin users)
+
+After editing, **always** follow this order:
+```bash
+# 1) Edit files in the repo folder
+
+# 2) Consistency check (recommended — auto-verifies perspective/pattern/skill counts and disclaimer, English docs too)
+node validate.mjs
+
+# 2-1) If you edited README body text, regenerate HTML too (needs pandoc)
+node build-docs.mjs
+
+# 3) Reflect into the cache (this step is effectively "deploy" for a local plugin)
+claude plugin marketplace update sodam-persona
+claude plugin uninstall sodam-persona@sodam-persona
+claude plugin install sodam-persona@sodam-persona
+
+# 4) Restart Claude Code
+
+# 5) Push to GitHub (⚠️ add ONLY the files you changed — do NOT use 'git add -A')
+git add sodam-persona/hooks/persona_core.md   # example: only the files you actually changed
+git commit -m "fix: summary of change"
+git push
+```
+
+> ⚠️ **Why avoid `git add -A`?** It can sweep in **unintended files** (temporary files left by other tools) and pollute the public repo. **Name only the files you changed** when adding.
+> ⚠️ **Don't skip cache reflection.** Skipping step 3 keeps the old version on (the most common misunderstanding).
 
 ---
 
@@ -253,11 +300,10 @@ In the **terminal** (`claude plugin ...`):
 **Repository structure** (inside this folder):
 ```
 SoDam-Persona/
-├── README.md / README.en.md            ← this document (KO/EN)
-├── GUIDE.md  / GUIDE.en.md             ← beginner guide & FAQ (KO/EN)
+├── README.md / README.en.md            ← this document (KO/EN, includes beginner guide & FAQ)
 ├── LICENSE                             ← full Apache-2.0 text
 ├── validate.mjs                        ← consistency checker (zero deps)
-├── build-docs.mjs                      ← regenerates README/GUIDE .html from .md (needs pandoc, doc editors only)
+├── build-docs.mjs                      ← regenerates README .html from .md (needs pandoc, doc editors only)
 ├── doc-theme.html                      ← HTML theme (fonts/dark-mode CSS) used by build-docs.mjs
 ├── .github/workflows/validate.yml      ← auto-check on every push (CI)
 ├── .claude-plugin/marketplace.json     ← marketplace definition
@@ -303,8 +349,9 @@ SoDam-Persona/
 - **`/sodam-persona:create`**: interview-style creation of a new domain persona. The AI suggests trigger words first → files are only touched after you confirm, with every related file synced automatically
 - **`/sodam-persona:edit`**: interview-style add/edit/remove of trigger words for any existing persona (base 15 perspectives + 4 domains + anything you created)
 - **Stronger input validation**: `/create`'s English-slug answer is now format-checked (prevents path manipulation)
-- **Doc reproducibility**: `build-docs.mjs` fixes README/GUIDE (.md) → `.html` regeneration into a single repeatable command
-- **Wider consistency checks**: `validate.mjs` now also checks the English docs (README.en/GUIDE.en) and HTML sync
+- **Doc reproducibility**: `build-docs.mjs` fixes README (.md) → `.html` regeneration into a single repeatable command
+- **Wider consistency checks**: `validate.mjs` now also checks the English docs (README.en) and HTML sync
+- **Doc structure simplified (2026-07-27)**: retired GUIDE.md/GUIDE.en.md and folded the beginner guide, FAQ, maintenance steps, and glossary entirely into README (KO/EN)
 - **Safer hooks**: if a source file is missing, hooks degrade safely to an empty value instead of crashing (just print a diagnostic)
 
 </details>
@@ -330,8 +377,7 @@ SoDam-Persona/
 | **Skills (investor/tax) don't appear** | Not restarted, or not enough trigger words | Restart, then be explicit like `review this VAT filing`. Check `Skills (7)` via `claude plugin details sodam-persona` |
 | **Errors like `uv: command not found`** | Another plugin's hook issue (unrelated to this one) | Safe to ignore (this plugin has no such hook) |
 | **Settings seem to break entirely** | `settings.json` may be broken (one wrong character voids the whole file) | Validate the JSON, restore from backup ([Section 16](#16-safety--backup--removal-rollback)) |
-
-> For more cases and root-cause analysis, see **[GUIDE.en.md](./GUIDE.en.md)**.
+| **Can't install straight from GitHub** | Typo in repo name, or network blocked (company/school) | Double-check the name → if it still fails, clone/download ZIP and install from the local folder path ([Section 5](#5-detailed-install-step-by-step)) |
 
 ---
 
@@ -342,8 +388,8 @@ SoDam-Persona/
 - **Q. Any passwords/API keys inside?** → **None.** Just personality text.
 - **Q. Does it cost more tokens?** → The always-on part is very light; the heavy body is injected once at session start; domain skills are used **only when the topic comes up**.
 - **Q. Can I use it commercially?** → **Yes (Apache-2.0).** Conditions in [Section 17](#17-license--copyright--commercial-use).
-
-> Full FAQ and recipes: see **[GUIDE.en.md](./GUIDE.en.md)**.
+- **Q. Does it conflict with other plugins?** → The persona ignores other plugins' auto-skill suggestions, but **its own skills (persona-*) are an exception and auto-activate**. It takes priority without conflict.
+- **Q. How do I use it identically on multiple computers?** → On each computer, follow the same 3 lines in [Section 4](#4-download--quick-start-3-lines).
 
 ---
 
