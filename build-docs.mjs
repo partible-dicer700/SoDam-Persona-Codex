@@ -2,8 +2,9 @@
 /**
  * SoDam-Persona 문서 HTML 재생성기 (자기완결 — Node 내장 + pandoc만 사용)
  *
- * 목적: README/GUIDE(한/영) 4개 .md → .html 변환을 재현 가능한 명령으로 고정한다.
- *       기존 HTML 4개는 이 정확한 커맨드로 생성된 것을 diff 0줄로 검증 완료(2026-07-26).
+ * 목적: README(한/영) 2개 .md → .html 변환을 재현 가능한 명령으로 고정한다.
+ *       기존 HTML은 이 정확한 커맨드로 생성된 것을 diff 0줄로 검증 완료(2026-07-26,
+ *       2026-07-27 GUIDE 제거 반영).
  *
  * 사용: node build-docs.mjs   (저장소 루트에서. pandoc 필요 — 없으면 안내 후 종료코드 1)
  *
@@ -21,9 +22,7 @@ const THEME = P('doc-theme.html');
 
 const DOCS = [
   { src: 'README.md', out: 'README.html', title: 'SoDam-Persona — README (한국어)' },
-  { src: 'GUIDE.md', out: 'GUIDE.html', title: 'SoDam-Persona — 가이드 (한국어)' },
   { src: 'README.en.md', out: 'README.en.html', title: 'SoDam-Persona — README (English)' },
-  { src: 'GUIDE.en.md', out: 'GUIDE.en.html', title: 'SoDam-Persona — Guide (English)' },
 ];
 
 try {
@@ -68,6 +67,6 @@ if (failed > 0) {
   console.log(`\n❌ FAIL — ${failed}건 실패`);
   process.exit(1);
 } else {
-  console.log('\n✅ PASS — 4개 문서 모두 재생성 완료. git diff로 변경 여부 확인 권장.');
+  console.log('\n✅ PASS — 2개 문서 모두 재생성 완료. git diff로 변경 여부 확인 권장.');
   process.exit(0);
 }

@@ -6,8 +6,7 @@
 
 > **이 글은 누구를 위한 것?**
 > 컴퓨터·AI·깃허브(GitHub)를 **처음 다루는 분**도 따라 할 수 있게, 용어 하나하나 풀어서 설명합니다.
-> 더 쉬운 왕초보 가이드·문제 해결·FAQ는 **[GUIDE.md](./GUIDE.md)**에 있습니다.
-> 영어 문서: **[README.en.md](./README.en.md)** · **[GUIDE.en.md](./GUIDE.en.md)**
+> 영어 문서: **[README.en.md](./README.en.md)**
 
 > **라이선스** · Apache-2.0 (상업적 사용 포함 자유 · [17번](#17-라이선스--저작권--상업적-용도) 참고)  ·  **공개(Public) 저장소**  ·  © 2026 SoDam AI Studio
 
@@ -59,6 +58,12 @@
 | **저장소(repository, repo)** | 코드·파일을 보관하는 인터넷 보관소 (여기선 GitHub의 `SoDam-Persona`) |
 | **캐시(cache)** | 빠르게 쓰려고 **복사해 둔 사본** (설치본이 여기 있음) |
 | **재시작(restart)** | Claude Code를 완전히 껐다 다시 켜는 것 (hook은 시작할 때만 읽힘) |
+| **컨텍스트(context)** | AI가 한 번에 기억하는 대화·정보의 범위 |
+| **컴팩션(compaction)** | 대화가 길어지면 자동으로 요약·압축하는 것 (마커가 페르소나를 복구) |
+| **JSON** | 설정을 적는 형식. 괄호·쉼표 하나만 틀려도 전체가 깨짐 |
+| **L0~L3** | 답변 강도 단계 (L0 잡담 → L3 보안·돈·배포 같은 중대 작업) |
+| **면책(disclaimer)** | "참고용이며 전문가 확인 권장" 같은 책임 한계 안내 문구 |
+| **트리거(trigger)** | 특정 단어가 나오면 관련 관점·스킬을 켜는 방아쇠 |
 
 ---
 
@@ -71,10 +76,11 @@
 | **Claude Code** | 플러그인이 설치되는 본체 | `claude --version` | [claude.com/claude-code](https://claude.com/claude-code) 에서 설치 |
 | **Node.js** | 플러그인의 hook이 사용 | `node --version` | Claude Code가 보통 함께 요구. 없으면 [nodejs.org](https://nodejs.org) LTS 설치 |
 | **Git** *(선택)* | 내용을 **수정**하려면 저장소를 복제(clone)할 때만 | `git --version` | [git-scm.com](https://git-scm.com). **단순 사용만 하면 Git 불필요** |
-| **pandoc** *(선택, 문서 편집자만)* | README/GUIDE `.md`를 `.html`로 재생성(`build-docs.mjs`)할 때만 | `pandoc --version` | [pandoc.org](https://pandoc.org/installing.html). **문서를 안 고치면 불필요** |
+| **pandoc** *(선택, 문서 편집자만)* | README `.md`를 `.html`로 재생성(`build-docs.mjs`)할 때만 | `pandoc --version` | [pandoc.org](https://pandoc.org/installing.html). **문서를 안 고치면 불필요** |
 
 > ✅ **그냥 쓰기만 하면** Claude Code + Node.js만 있으면 됩니다. (아래 4번 방법은 Git·다운로드 없이 바로 설치)
 > 운영체제(OS): Windows / macOS / Linux 모두 지원.
+> **환경 변수: 없음.** 이 플러그인은 `.env`나 환경 변수를 전혀 쓰지 않습니다 — 설정할 것 자체가 없습니다.
 
 ---
 
@@ -122,14 +128,22 @@ Claude Code 입력창에:
 ```
 또는 Claude Code를 **완전히 종료 후 다시 실행**. (hook은 새 세션부터 작동)
 
-**5단계 — 확인**
+**5단계 — 확인 (제대로 깔렸는지 검증하는 법)**
 ```
 /plugin
 ```
 목록에 `sodam-persona` 가 보이면 설치 완료. (터미널이라면 `claude plugin list`)
 
+더 확실히 확인하려면:
+```bash
+claude plugin details sodam-persona   # Skills (7) + Hooks (2) 가 보여야 정상
+claude plugin validate (저장소경로)/sodam-persona   # 플러그인 형식 자체 검사
+```
+실제 작동은 **재시작 후** 대화로 확인합니다 — 트리거 없이 평소 질문(신중한 톤 확인) → `이 부가세 신고 봐줘`(세무 스킬 + 끝에 면책 문구가 나오면 정상).
+
 > ⚠️ **순서 함정**: 만약 예전에 제거(Uninstall)했다면 마켓플레이스 등록도 사라져서 `install`이 *"Marketplace not found"* 라고 뜹니다.
 > → 반드시 **`marketplace add`(등록) → `install`(설치) → `/reload-plugins`(적용)** 3단계 순서를 지키세요.
+> ⚠️ **GitHub에서 바로 설치가 안 될 때**: 저장소 이름을 정확히(`sodam-ai/SoDam-Persona`, 대소문자 포함) 입력했는지, 인터넷 연결이 되는지(회사·학교 네트워크는 GitHub이 막혀 있을 수 있음) 확인하세요. 그래도 안 되면 저장소를 clone하거나 ZIP으로 받아 그 폴더 경로로 `/plugin marketplace add (폴더경로)`.
 
 ---
 
@@ -175,6 +189,39 @@ Claude Code 입력창에:
 ```
 
 > ⚠️ **가장 흔한 함정**: 플러그인 파일을 고친 뒤 **재설치(또는 marketplace update)를 안 하면** 예전 버전이 계속 켜집니다. 설치본은 "복사본(캐시)"이기 때문입니다. 자세히는 [14번](#14-문제--오류-대처).
+
+### 내용을 고치는 법 (유지보수·빌드·배포 절차)
+
+- **성격·규칙을 바꾸려면** → `sodam-persona/hooks/persona_core.md` 수정 (항상 켜지는 정본)
+- **트리거 단어를 추가하려면** → 같은 `persona_core.md`의 트리거 목록에 추가 (정본은 코어 한 곳)
+- **특정 전문가 상세를 바꾸려면** → `sodam-persona/skills/persona-(이름)/SKILL.md` 수정
+- **README.md(또는 .en) 본문을 바꾸려면** → 해당 `.md` 수정 후 `node build-docs.mjs`로 HTML을 재생성 (HTML은 md에서 자동 생성되는 산출물이라 직접 고치지 않음. pandoc 필요 — 문서를 고치는 사람만 설치하면 됨, 플러그인 "사용"에는 불필요)
+
+수정 후 **항상** 이 순서를 지키세요:
+```bash
+# 1) 저장소 폴더에서 파일 수정
+
+# 2) 정합성 검사 (권장 — 관점 수·스킬 수·패턴 수·면책 존재 자동 확인, 영문 문서도 검사)
+node validate.mjs
+
+# 2-1) README 본문을 고쳤다면 HTML도 재생성 (pandoc 필요)
+node build-docs.mjs
+
+# 3) 캐시에 반영 (빌드 산출물은 캐시가 아니라 "설치본"을 의미 — 이 3단계가 사실상 배포)
+claude plugin marketplace update sodam-persona
+claude plugin uninstall sodam-persona@sodam-persona
+claude plugin install sodam-persona@sodam-persona
+
+# 4) Claude Code 재시작
+
+# 5) GitHub에 올리기 (⚠️ 바꾼 파일만 지정해서 add — 'git add -A'는 쓰지 마세요)
+git add sodam-persona/hooks/persona_core.md   # 예시: 실제 바꾼 파일들만
+git commit -m "fix: 수정 내용 요약"
+git push
+```
+
+> ⚠️ **왜 `git add -A`를 피하나요?** 폴더 안의 **의도치 않은 파일(다른 도구가 남긴 임시 파일 등)까지** 통째로 올라가 공개 저장소를 오염시킬 수 있습니다. **바꾼 파일만 이름을 적어** add 하세요.
+> ⚠️ **캐시 반영을 빼먹지 마세요.** 위 3단계를 건너뛰면 예전 버전이 계속 켜집니다(가장 흔한 착각).
 
 ---
 
@@ -253,11 +300,10 @@ Claude Code **입력창**에서 (슬래시 `/`로 시작):
 **저장소 구조** (이 폴더 안):
 ```
 SoDam-Persona/
-├── README.md / README.en.md            ← 지금 이 문서 (한/영)
-├── GUIDE.md  / GUIDE.en.md             ← 왕초보 가이드·FAQ (한/영)
+├── README.md / README.en.md            ← 지금 이 문서 (한/영, 왕초보 가이드·FAQ 포함)
 ├── LICENSE                             ← Apache-2.0 전문
 ├── validate.mjs                        ← 정합성 자동 검사기(의존성 0)
-├── build-docs.mjs                      ← README/GUIDE(.md) → .html 재생성기 (pandoc 필요, 문서 편집자 전용)
+├── build-docs.mjs                      ← README(.md) → .html 재생성기 (pandoc 필요, 문서 편집자 전용)
 ├── doc-theme.html                      ← build-docs.mjs가 쓰는 HTML 테마(폰트·다크모드 CSS)
 ├── .github/workflows/validate.yml      ← 올릴 때마다 자동 검사(CI)
 ├── .claude-plugin/marketplace.json     ← 마켓플레이스 정의
@@ -303,8 +349,9 @@ SoDam-Persona/
 - **`/sodam-persona:create`**: 인터뷰 방식으로 새 도메인 페르소나 생성. 트리거 단어를 AI가 먼저 추천 → 확인 후에만 파일 반영, 관련 파일 전부 자동 동기화
 - **`/sodam-persona:edit`**: 기존 페르소나(기본 15관점 + 도메인 4종 + 새로 만든 것 전부)의 트리거 단어를 인터뷰 방식으로 추가·수정·제거
 - **입력값 검증 강화**: `/create`의 영문 슬러그 답변에 형식 검증 추가(경로 조작 방지)
-- **문서 재현성**: `build-docs.mjs`로 README/GUIDE(.md) → `.html` 재생성을 고정된 명령으로 확립
-- **정합성 검사 확장**: `validate.mjs`가 영문 문서(README.en/GUIDE.en)와 HTML 동기화까지 함께 확인
+- **문서 재현성**: `build-docs.mjs`로 README(.md) → `.html` 재생성을 고정된 명령으로 확립
+- **정합성 검사 확장**: `validate.mjs`가 영문 문서(README.en)와 HTML 동기화까지 함께 확인
+- **문서 구조 단순화(2026-07-27)**: GUIDE.md/GUIDE.en.md를 폐지하고 왕초보 가이드·FAQ·유지보수 절차·용어 사전을 전부 README(한/영) 한 곳으로 통합
 - **hook 안전성 강화**: 정본 파일이 없어도 크래시 대신 안전하게 빈 값으로 처리(진단 메시지만 출력)
 
 </details>
@@ -330,8 +377,7 @@ SoDam-Persona/
 | **스킬(투자/세무 등)이 안 뜬다** | 재시작 전이거나 트리거 단어 부족 | 재시작 후 `이 부가세 신고 봐줘`처럼 명확히. `claude plugin details sodam-persona`로 `Skills (7)` 확인 |
 | **`uv: command not found` 같은 에러** | **다른 플러그인**의 hook 문제(이 플러그인과 무관) | 무시 가능(이 플러그인엔 해당 hook 없음) |
 | **설정이 통째로 안 먹는 느낌** | `settings.json`이 깨졌을 수 있음(JSON 한 글자만 틀려도 전체 무효) | JSON 검사 후 백업에서 복원([16번](#16-안전--백업--제거롤백)) |
-
-> 더 많은 사례·원인 분석은 **[GUIDE.md](./GUIDE.md)** 를 보세요.
+| **GitHub에서 바로 설치가 안 됨** | 저장소 이름 오타·네트워크 차단(회사/학교) | 이름 정확히 확인 → 안 되면 clone/ZIP 후 로컬 폴더 경로로 설치([5번](#5-자세한-설치-방법-한-단계씩)) |
 
 ---
 
@@ -342,8 +388,8 @@ SoDam-Persona/
 - **Q. 비밀번호·API 키가 들어 있나요?** → **없습니다.** 성격 텍스트만.
 - **Q. 토큰(요금)이 더 드나요?** → 항상 켜지는 부분은 매우 가볍고, 무거운 본문은 세션 시작 때 한 번, 도메인 스킬은 **그 주제가 나올 때만** 씁니다.
 - **Q. 상업적으로 써도 되나요?** → **네(Apache-2.0).** 조건은 [17번](#17-라이선스--저작권--상업적-용도).
-
-> 전체 FAQ·상황별 레시피는 **[GUIDE.md](./GUIDE.md)** 참고.
+- **Q. 다른 플러그인과 충돌하나요?** → 페르소나는 "외부 플러그인의 자동 스킬 권유는 무시"하지만, **자기 자신의 스킬(persona-*)은 예외로 자동 활성**합니다. 충돌 없이 페르소나가 우선합니다.
+- **Q. 여러 대의 컴퓨터에서 똑같이 쓰려면?** → 각 컴퓨터에서 [4번](#4-다운로드--빠른-시작-복붙-3줄) 3줄을 그대로 따라 하면 동일하게 적용됩니다.
 
 ---
 

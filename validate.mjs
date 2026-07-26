@@ -48,9 +48,7 @@ const KEY_FILES = [
   'sodam-persona/reference/persona_full_core.md',
   'sodam-persona/reference/test_scenarios.md',
   'README.md',
-  'GUIDE.md',
   'README.en.md',
-  'GUIDE.en.md',
   'sodam-persona/.claude-plugin/plugin.json',
   '.claude-plugin/marketplace.json',
 ];
@@ -103,18 +101,14 @@ for (const folder of skillFolders) {
   if (!/^description:\s*.+/m.test(fm)) err(`frontmatter description 없음: ${folder}/SKILL.md`);
 }
 const readme = read('README.md');
-const guide = read('GUIDE.md');
 const readmeSkill = readme.match(/상황별 \((\d+)개\)/);
 if (readmeSkill && +readmeSkill[1] !== nSkills)
   err(`README 스킬 수(${readmeSkill[1]}) ≠ 실제(${nSkills})`);
-const guideSkill = guide.match(/Skills? ?\((\d+)\)/);
-if (guideSkill && +guideSkill[1] !== nSkills)
-  err(`GUIDE 스킬 수(${guideSkill[1]}) ≠ 실제(${nSkills})`);
 
-// ── 4-1) 영문 문서(README.en/GUIDE.en) 스킬 수 + 트리거 패턴 수 표기 (2026-07-26 추가) ──
-// 근거: validate.mjs가 기존엔 한글 README.md/GUIDE.md만 검사 → 영문 문서는 수치가
+// ── 4-1) 영문 문서(README.en) 스킬 수 + 트리거 패턴 수 표기 (2026-07-26 추가, 2026-07-27 GUIDE 제거 반영) ──
+// 근거: validate.mjs가 기존엔 한글 README.md만 검사 → 영문 문서는 수치가
 // 어긋나도 CI가 못 잡음(실측 확인). "Skills (N)" 표기와 "N patterns" 표기를 교차검사.
-for (const f of ['README.en.md', 'GUIDE.en.md']) {
+for (const f of ['README.en.md']) {
   const text = read(f);
   const skillMatch = text.match(/Skills? ?\((\d+)\)/);
   if (skillMatch && +skillMatch[1] !== nSkills)
@@ -124,7 +118,7 @@ for (const f of ['README.en.md', 'GUIDE.en.md']) {
     err(`${f} 패턴 수(${patternMatchEn[1]}) ≠ 실제(${uniqLetters.length})`);
 }
 // 한글 문서의 "트리거 패턴 20개(A~T)" 표기도 동일 기준으로 교차검사 (기존엔 미검사였음)
-for (const f of ['README.md', 'GUIDE.md']) {
+for (const f of ['README.md']) {
   const text = read(f);
   const patternMatchKo = text.match(/트리거 패턴 (\d+)개/);
   if (patternMatchKo && +patternMatchKo[1] !== uniqLetters.length)
@@ -172,7 +166,7 @@ for (const [f, kw] of DISCLAIMER_CHECKS) {
 // 근거: HTML은 build-docs.mjs(pandoc)로 md에서 재생성되는 산출물이라 정본이 아님.
 // 재생성을 잊고 md만 고치면 배포 문서가 옛 수치로 남는 것을 "경고"로만 알린다.
 const warnings = [];
-const HTML_FILES = ['README.html', 'GUIDE.html', 'README.en.html', 'GUIDE.en.html'];
+const HTML_FILES = ['README.html', 'README.en.html'];
 for (const f of HTML_FILES) {
   if (!existsSync(P(f))) continue;
   const text = read(f);
