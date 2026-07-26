@@ -53,6 +53,14 @@ description: "인터뷰 방식으로 새 도메인 페르소나(16번째~)를 �
 8. **`validate.mjs`**
    - `DOMAINS` 배열(현재 `['persona-investor', 'persona-lawyer', 'persona-accountant', 'persona-marketer']`)에 `persona-<슬러그>` 추가 (이래야 5번 검사가 새 도메인도 배선 확인함)
 
+## 3-1단계. 검증 전 마지막 훑기 (2026-07-27 실측 반영)
+
+3단계 목록은 알려진 위치만 나열한 것이라, `persona-triggers/SKILL.md`의 개별 패턴 섹션(A/L/P/Q/I 등)이나 매칭 예시 표, `persona-format.md`/`persona-investor`/`persona-lawyer`의 안내 문구처럼 옛 관점 수("N명"·"N관점")가 산발적으로 더 남아있을 수 있다(실제 라이브 테스트에서 17건 누락 발견됨). `node validate.mjs`를 처음 돌리기 전에, 옛 숫자를 기준으로 프로젝트 전체를 한 번 더 검색해 남은 곳을 먼저 고친다:
+
+```
+grep -rn "옛N명\|옛N관점\|옛N개 관점\|옛N개 도메인 관점\|A~옛마지막글자\|Skills (옛스킬수)\|Skills(옛스킬수)" --include=*.md --include=*.json --include=*.txt .
+```
+
 ## 4단계. 검증
 
 `node validate.mjs`를 실행한다. `❌ FAIL`이 나오면 표시된 항목을 하나씩 고치고 다시 실행 — `✅ PASS`가 나올 때까지 반복한다. 실행 결과를 그대로 사용자에게 보여준다.
