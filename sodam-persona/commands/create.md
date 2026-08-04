@@ -46,7 +46,7 @@ description: "인터뷰 방식으로 새 도메인 페르소나(16번째~)를 �
    - "다관점 판단 (15개)" 제목과 목록에 새 관점 추가, 숫자 갱신
 6. **`sodam-persona/reference/persona_full_core.md`**, **`sodam-persona/reference/test_scenarios.md`**
    - 관점 수 숫자 표기 갱신 (validate.mjs가 이 두 파일도 검사 대상에 포함함)
-7. **`README.md` / `GUIDE.md` / `README.en.md` / `GUIDE.en.md`** (4개 전부)
+7. **`README.md` / `README.en.md`** (2개 전부. 2026-07-27부로 GUIDE.md/GUIDE.en.md는 폐지되어 README에 통합됨)
    - "15명"/"15개 관점"/"15 perspectives" 등 전부 새 숫자로
    - "20개 트리거 패턴(A~T)" → 새 글자·새 개수로
    - "스킬 7개"/"Skills (7)" → 새 개수로
@@ -69,5 +69,5 @@ grep -rn "옛N명\|옛N관점\|옛N개 관점\|옛N개 도메인 관점\|A~옛�
 ## 5단계. 마무리 안내
 
 - 설치된 캐시에는 자동 반영되지 않는다는 점을 안내: `claude plugin marketplace update sodam-persona` → `uninstall` → `install` → 재시작
-- git 커밋은 바뀐 파일만 정확히 이름 지정해 add (`git add -A` 금지, 이 저장소 GUIDE.md의 기존 규칙), conventional commit 형식으로 작성
+- git 커밋은 바뀐 파일만 정확히 이름 지정해 add (`git add -A` 금지, 이 저장소 README.md §8의 기존 규칙), conventional commit 형식으로 작성
 - 실제 push·PR 생성·merge는 사용자의 명시적 승인 없이는 실행하지 않는다
