@@ -184,6 +184,70 @@ if (warnings.length) {
   for (const w of warnings) console.log(`  · ${w}`);
 }
 
+// ── 9) 깨진 문서 참조 검사 (2026-08-04 추가) ──────────────────────────────
+// 근거: PR #8(GUIDE.md 폐지)이 create.md의 GUIDE.md 참조 2곳을 못 지운 채 CI를
+// 통과한 실사고(2026-08-04 실측). 1~8번 검사 중 "참조된 파일이 실제로 있는가"를
+// 보는 게 없어서 못 잡았다 — 그 빈틈만 메운다.
+// 설계: 이 저장소 자신의 파일(README·persona_core.md·skills/persona-*/SKILL.md 등)만
+// 검사 대상으로 삼는다. feedback_*.md·reference_*.md·user_persona*.md 같은 사용자
+// 개인 메모리 파일은 이 저장소 밖에 있는 게 정상이라 대상에서 제외(외부 참조 오탐 방지).
+const REPO_KNOWN_BASENAMES = new Set([
+  'persona_core.md', 'persona_marker.txt', 'hooks.json', 'plugin.json',
+  'marketplace.json', 'README.md', 'README.en.md', 'LICENSE', 'NOTICE',
+  'validate.mjs', 'build-docs.mjs', 'doc-theme.html', 'GUIDE.md', 'GUIDE.en.md',
+]);
+const isCheckableRepoRef = (ref) => {
+  if (!/^[A-Za-z0-9_./-]+\.(md|mjs|js|json|html|txt)$/.test(ref)) return false;
+  if (REPO_KNOWN_BASENAMES.has(ref)) return true;
+  if (/^persona-[a-z0-9-]+\/SKILL\.md$/.test(ref)) return true;
+  if (ref.startsWith('sodam-persona/')) return true;
+  if (ref.startsWith('reference/')) return true;
+  if (ref.startsWith('.claude-plugin/')) return true;
+  if (ref.startsWith('.github/')) return true;
+  return false;
+};
+const refCandidates = (ref) => [
+  P(ref), P('sodam-persona', ref), P('sodam-persona/skills', ref), P('sodam-persona/hooks', ref),
+];
+const GITIGNORED_BACKLOG = new Set(['v5_candidates.md', 'v5_decision_gates.md', 'v5_project_assets.md', 'v5_quick_wins.md']);
+function listFiles(dir, exts, out = []) {
+  for (const name of readdirSync(dir)) {
+    const full = join(dir, name);
+    if (statSync(full).isDirectory()) { listFiles(full, exts, out); continue; }
+    if (!exts.some((e) => name.endsWith(e))) continue;
+    if (GITIGNORED_BACKLOG.has(name)) continue; // 과거 스냅샷, 배포 제외(.gitignore 동일 목록)
+    out.push(full);
+  }
+  return out;
+}
+const DOC_SCAN_FILES = [P('README.md'), P('README.en.md'), ...listFiles(P('sodam-persona'), ['.md'])];
+for (const file of DOC_SCAN_FILES) {
+  const text = readFileSync(file, 'utf8');
+  const rel = file.slice(ROOT.length + 1);
+  for (const m of text.matchAll(/`([^`\n]+)`/g)) {
+    const ref = m[1];
+    if (isCheckableRepoRef(ref) && !refCandidates(ref).some(existsSync)) {
+      err(`깨진 문서 참조 (${rel}): "${ref}" 파일 없음`);
+    }
+  }
+}
+
+// ── 10) 개인 절대경로 노출 검사 (2026-08-04 추가) ─────────────────────────
+// 근거: 커밋 9722404("개인 절대경로 노출 제거")가 reference/만 훑고, 실제 배포되는
+// skills/persona-triggers/SKILL.md의 D:\ScreenShot\는 놓쳤다(2026-08-04 실측).
+// sodam-persona/ 안(=실제 배포되는 플러그인 폴더)만 검사한다 — README.md 루트의
+// "C:\Users\(사용자)\..." 같은 자리표시자(placeholder) 예시는 대상 밖(오탐 방지).
+const PERSONAL_PATH_PATTERNS = [/[A-Za-z]:\\[^`\s]*/g, /\/(?:Users|home)\/[A-Za-z0-9_.-]+/g];
+for (const file of listFiles(P('sodam-persona'), ['.md', '.js', '.json', '.txt'])) {
+  const text = readFileSync(file, 'utf8');
+  const rel = file.slice(ROOT.length + 1);
+  for (const re of PERSONAL_PATH_PATTERNS) {
+    for (const m of text.matchAll(re)) {
+      err(`개인 절대경로 노출 의심 (${rel}): "${m[0]}"`);
+    }
+  }
+}
+
 // ── 결과 ────────────────────────────────────────────────────────────────
 console.log(`SoDam-Persona 정합성 검사 — 관점 ${N}명 · 패턴 ${uniqLetters.length}개 · 스킬 ${nSkills}개`);
 if (errors.length === 0) {
