@@ -434,6 +434,15 @@ class="sourceCode powershell"><code class="sourceCode powershell"><span id="cb1-
 <p>A version number means it's installed; a "command not recognized"
 error means it isn't yet (<a href="#troubleshooting">Troubleshooting</a>
 has more).</p>
+<h3 id="a-note-on-environment-variables">A note on environment
+variables</h3>
+<p>This plugin has <strong>zero</strong> environment variables (API
+keys, <code>.env</code> files, etc.) that a user needs to configure
+(confirmed by code review — neither hook script reads
+<code>process.env</code> anywhere). The <code>${PLUGIN_ROOT}</code>
+placeholder in the hook command is substituted automatically by Codex at
+run time with the plugin's install path; there is nothing for you to set
+yourself.</p>
 <hr />
 <h2 id="how-to-download">How to Download</h2>
 <p>There are two installation paths, and whether you need a separate

@@ -74,6 +74,10 @@ git --version
 
 A version number means it's installed; a "command not recognized" error means it isn't yet ([Troubleshooting](#troubleshooting) has more).
 
+### A note on environment variables
+
+This plugin has **zero** environment variables (API keys, `.env` files, etc.) that a user needs to configure (confirmed by code review — neither hook script reads `process.env` anywhere). The `${PLUGIN_ROOT}` placeholder in the hook command is substituted automatically by Codex at run time with the plugin's install path; there is nothing for you to set yourself.
+
 ---
 
 ## How to Download
