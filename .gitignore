@@ -1,3 +1,8 @@
+# Secrets (defense in depth — this plugin currently reads none, see README "환경 변수 안내")
+.env
+.env.*
+!.env.example
+
 # OS
 .DS_Store
 Thumbs.db
