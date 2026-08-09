@@ -575,6 +575,17 @@ Codex가 사용하는 AI 모델 제공자로 대화 맥락 전송
 날짜가 최신인 항목이 위에 오도록 정리했습니다. 항목을 클릭(또는 탭)하면 세부 내용이 펼쳐집니다.
 
 <details>
+<summary><strong>2026-08-09 — 법률/저작권/라이선스/상업적 용도 전수 감사</strong></summary>
+
+- 회계·세무(#14)·법률(#11) 도메인에만 있던 "실행성 답변 시 면책 문구 필수" 규칙이 투자자(#13, 매매·포지션·타이밍 판단)에는 없었던 것을 발견.
+- `skills/persona-investor/SKILL.md`에 필수 면책 조항 추가, `validate.mjs`의 면책 검사(7번)에 편입 — **적용 완료**(`node validate.mjs` 통과 확인).
+- `hooks/persona_core.md`·`hooks/persona_marker.txt`(항상-주입 코어)의 "[면책 강제]" 규칙을 #13까지 넓히는 수정과 `plugins/sodam-persona/.claude-plugin/plugin.json`에 `license` 필드를 추가하는 수정은 저장소 자기보호 가드레일이 자동 편집을 막아 **미반영** — 수정할 정확한 내용은 채팅 보고로 전달, 사용자가 직접 편집기로 반영 필요.
+- LICENSE(Apache License 2.0 공식 원문)·NOTICE(저작권자·제3자 인용·상표 고지)·이 문서의 [법률, 저작권, 라이선스, 상업적 용도](#법률-저작권-라이선스-상업적-용도) 섹션은 내용·구조 모두 이상 없음을 재확인.
+- 의존성 파일(package.json 등)·이미지·폰트·assets 폴더가 저장소 전체에서 0건인 것도 재확인 — 제3자 라이선스 충돌 위험 없음.
+
+</details>
+
+<details>
 <summary><strong>2026-08-09 — Codex 마켓플레이스 정식 패키징</strong></summary>
 
 - `.agents/plugins/marketplace.json` 신설 — Codex가 실제로 읽는 마켓플레이스 정의를 정식으로 분리.
