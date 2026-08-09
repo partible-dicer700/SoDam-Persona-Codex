@@ -3,7 +3,7 @@
  * SoDam-Persona 정합성 검사기 (자기완결 — Node 내장만 사용, 의존성 0)
  *
  * 목적: 관점 수(11→12→13→14→15 같은) 드리프트·스킬 수 불일치·도메인 배선 누락·
- *       JSON 오류를 push 전에 기계적으로 잡는다. (CLAUDE.md 하네스 원칙: 골든 룰을 규칙으로 인코딩)
+ *       JSON 오류를 push 전에 기계적으로 잡는다. (AGENTS.md 하네스 원칙: 골든 룰을 규칙으로 인코딩)
  *
  * 사용: node validate.mjs   (저장소 루트에서. 종료코드 0=통과, 1=실패)
  *
@@ -24,7 +24,9 @@ const errors = [];
 const err = (m) => errors.push(m);
 
 // ── 1) 관점 수 N = B 테이블 행 수 (source of truth) ───────────────────────
-const triggers = read('sodam-persona/skills/persona-triggers/SKILL.md');
+const PLUGIN_ROOT = 'plugins/sodam-persona';
+const pluginPath = (...parts) => [PLUGIN_ROOT, ...parts].join('/');
+const triggers = read(pluginPath('skills/persona-triggers/SKILL.md'));
 const bSection = triggers.slice(
   triggers.indexOf('## B.'),
   triggers.indexOf('복수 관점 명시')
@@ -39,18 +41,18 @@ if (N < 1) err('B테이블에서 관점 행을 찾지 못함');
 
 // ── 2) 관점 수 표기 일관성 (모든 핵심 파일이 N과 일치해야 함) ────────────
 const KEY_FILES = [
-  'sodam-persona/hooks/persona_core.md',
-  'sodam-persona/hooks/persona_marker.txt',
-  'sodam-persona/skills/persona-format/SKILL.md',
-  'sodam-persona/skills/persona-triggers/SKILL.md',
-  'sodam-persona/skills/persona-investor/SKILL.md',
-  'sodam-persona/skills/persona-lawyer/SKILL.md',
-  'sodam-persona/reference/persona_full_core.md',
-  'sodam-persona/reference/test_scenarios.md',
+  pluginPath('hooks/persona_core.md'),
+  pluginPath('hooks/persona_marker.txt'),
+  pluginPath('skills/persona-format/SKILL.md'),
+  pluginPath('skills/persona-triggers/SKILL.md'),
+  pluginPath('skills/persona-investor/SKILL.md'),
+  pluginPath('skills/persona-lawyer/SKILL.md'),
+  pluginPath('reference/persona_full_core.md'),
+  pluginPath('reference/test_scenarios.md'),
   'README.md',
   'README.en.md',
-  'sodam-persona/.claude-plugin/plugin.json',
-  '.claude-plugin/marketplace.json',
+  pluginPath('.codex-plugin/plugin.json'),
+  '.agents/plugins/marketplace.json',
 ];
 // 관점 수를 뜻하는 표현만 (년 제외). 캡처된 모든 숫자는 N과 같아야 한다.
 const COUNT_PATTERNS = [
@@ -85,7 +87,7 @@ else {
 }
 
 // ── 4) 스킬 수 일관성 (실제 폴더 = 문서 표기) + frontmatter name=폴더명 ──
-const skillsDir = P('sodam-persona/skills');
+const skillsDir = P(PLUGIN_ROOT, 'skills');
 const skillFolders = readdirSync(skillsDir).filter((d) =>
   statSync(join(skillsDir, d)).isDirectory()
 );
@@ -127,35 +129,36 @@ for (const f of ['README.md']) {
 
 // ── 5) 도메인 페르소나 배선 (core 파일맵 · marker 파일맵에 모두 존재) ────
 const DOMAINS = ['persona-investor', 'persona-lawyer', 'persona-accountant', 'persona-marketer'];
-const core = read('sodam-persona/hooks/persona_core.md');
-const marker = read('sodam-persona/hooks/persona_marker.txt');
+const core = read(pluginPath('hooks/persona_core.md'));
+const marker = read(pluginPath('hooks/persona_marker.txt'));
 for (const d of DOMAINS) {
-  if (!existsSync(P(`sodam-persona/skills/${d}/SKILL.md`))) err(`도메인 스킬 없음: ${d}`);
+  if (!existsSync(P(PLUGIN_ROOT, 'skills', d, 'SKILL.md'))) err(`도메인 스킬 없음: ${d}`);
   if (!core.includes(d)) err(`persona_core.md 파일맵에 ${d} 누락`);
   if (!marker.includes(d)) err(`persona_marker.txt 파일맵에 ${d} 누락`);
 }
 
 // ── 6) JSON 유효성 + 이름/소스 경로 ────────────────────────────────────
 try {
-  const plugin = JSON.parse(read('sodam-persona/.claude-plugin/plugin.json'));
+  const plugin = JSON.parse(read(pluginPath('.codex-plugin/plugin.json')));
   if (plugin.name !== 'sodam-persona') err(`plugin.json name(${plugin.name}) ≠ sodam-persona`);
+  if (plugin.skills !== './skills/') err(`plugin.json skills(${plugin.skills}) ≠ ./skills/`);
 } catch (e) { err(`plugin.json 파싱 실패: ${e.message}`); }
 try {
-  const mkt = JSON.parse(read('.claude-plugin/marketplace.json'));
+  const mkt = JSON.parse(read('.agents/plugins/marketplace.json'));
   const p0 = mkt.plugins?.[0];
   if (p0?.name !== 'sodam-persona') err(`marketplace plugins[0].name(${p0?.name}) ≠ sodam-persona`);
-  if (p0?.source && !existsSync(P(p0.source)))
-    err(`marketplace source 경로 없음: ${p0.source}`);
+  if (p0?.source?.path && !existsSync(P(p0.source.path)))
+    err(`marketplace source 경로 없음: ${p0.source.path}`);
 } catch (e) { err(`marketplace.json 파싱 실패: ${e.message}`); }
 
 // ── 7) 면책(disclaimer) 강제 존재 — #14 회계세무·#11 법률 안전 필수 ────────
 // 라이브 검증에서 #14 세무 답변이 면책을 누락(2026-07-11) → 항상-주입 레이어에
 // "면책 강제" 규칙이 실제로 존재하는지 기계 검사(드리프트 재발 차단).
 const DISCLAIMER_CHECKS = [
-  ['sodam-persona/hooks/persona_core.md', '면책 강제'],
-  ['sodam-persona/hooks/persona_marker.txt', '면책 강제'],
-  ['sodam-persona/skills/persona-accountant/SKILL.md', '면책'],
-  ['sodam-persona/skills/persona-lawyer/SKILL.md', '면책'],
+  [pluginPath('hooks/persona_core.md'), '면책 강제'],
+  [pluginPath('hooks/persona_marker.txt'), '면책 강제'],
+  [pluginPath('skills/persona-accountant/SKILL.md'), '면책'],
+  [pluginPath('skills/persona-lawyer/SKILL.md'), '면책'],
 ];
 for (const [f, kw] of DISCLAIMER_CHECKS) {
   if (!existsSync(P(f))) { err(`면책 검사 대상 파일 없음: ${f}`); continue; }
@@ -200,14 +203,14 @@ const isCheckableRepoRef = (ref) => {
   if (!/^[A-Za-z0-9_./-]+\.(md|mjs|js|json|html|txt)$/.test(ref)) return false;
   if (REPO_KNOWN_BASENAMES.has(ref)) return true;
   if (/^persona-[a-z0-9-]+\/SKILL\.md$/.test(ref)) return true;
-  if (ref.startsWith('sodam-persona/')) return true;
+  if (ref.startsWith('plugins/sodam-persona/')) return true;
   if (ref.startsWith('reference/')) return true;
-  if (ref.startsWith('.claude-plugin/')) return true;
+  if (ref.startsWith('.codex-plugin/') || ref.startsWith('.agents/plugins/')) return true;
   if (ref.startsWith('.github/')) return true;
   return false;
 };
 const refCandidates = (ref) => [
-  P(ref), P('sodam-persona', ref), P('sodam-persona/skills', ref), P('sodam-persona/hooks', ref),
+  P(ref), P(PLUGIN_ROOT, ref), P(PLUGIN_ROOT, 'skills', ref), P(PLUGIN_ROOT, 'hooks', ref),
 ];
 const GITIGNORED_BACKLOG = new Set(['v5_candidates.md', 'v5_decision_gates.md', 'v5_project_assets.md', 'v5_quick_wins.md']);
 function listFiles(dir, exts, out = []) {
@@ -220,7 +223,7 @@ function listFiles(dir, exts, out = []) {
   }
   return out;
 }
-const DOC_SCAN_FILES = [P('README.md'), P('README.en.md'), ...listFiles(P('sodam-persona'), ['.md'])];
+const DOC_SCAN_FILES = [P('README.md'), P('README.en.md'), ...listFiles(P(PLUGIN_ROOT), ['.md'])];
 for (const file of DOC_SCAN_FILES) {
   const text = readFileSync(file, 'utf8');
   const rel = file.slice(ROOT.length + 1);
@@ -238,7 +241,7 @@ for (const file of DOC_SCAN_FILES) {
 // sodam-persona/ 안(=실제 배포되는 플러그인 폴더)만 검사한다 — README.md 루트의
 // "C:\Users\(사용자)\..." 같은 자리표시자(placeholder) 예시는 대상 밖(오탐 방지).
 const PERSONAL_PATH_PATTERNS = [/[A-Za-z]:\\[^`\s]*/g, /\/(?:Users|home)\/[A-Za-z0-9_.-]+/g];
-for (const file of listFiles(P('sodam-persona'), ['.md', '.js', '.json', '.txt'])) {
+for (const file of listFiles(P(PLUGIN_ROOT), ['.md', '.js', '.json', '.txt'])) {
   const text = readFileSync(file, 'utf8');
   const rel = file.slice(ROOT.length + 1);
   for (const re of PERSONAL_PATH_PATTERNS) {

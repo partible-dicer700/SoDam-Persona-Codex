@@ -2,13 +2,13 @@
 description: "인터뷰 방식으로 기존 페르소나(기본 15관점 + 도메인 4종 + create로 만든 것 전부)의 트리거 단어를 추가·수정·제거"
 ---
 
-# /sodam-persona:edit — 기존 페르소나 트리거 단어 편집 (인터뷰 방식)
+# $persona-edit — 기존 페르소나 트리거 단어 편집 (인터뷰 방식)
 
 이 명령이 실행되면 아래 순서를 **하나씩, 인터뷰 형식으로** 진행한다.
 
 ## 0단계. 현재 목록 보여주기
 
-`sodam-persona/skills/persona-triggers/SKILL.md`의 `## B.` 섹션 표를 읽어, 1번부터 마지막 번호까지 전체 관점 목록(번호+이름)을 그대로 사용자에게 보여준다. (`create`로 새로 만든 페르소나가 있다면 여기 자동으로 포함되어 있다.)
+`plugins/sodam-persona/skills/persona-triggers/SKILL.md`의 `## B.` 섹션 표를 읽어, 1번부터 마지막 번호까지 전체 관점 목록(번호+이름)을 그대로 사용자에게 보여준다. (`create`로 새로 만든 페르소나가 있다면 여기 자동으로 포함되어 있다.)
 
 ## 1단계. 인터뷰 (한 번에 하나씩)
 
@@ -24,9 +24,9 @@ description: "인터뷰 방식으로 기존 페르소나(기본 15관점 + 도�
 - **도메인 페르소나** (#11 법률, #13 투자자, #14 회계세무, #15 마케팅, 그리고 `create`로 만들어진 것들 — 전용 스킬 파일이 있고 `persona-triggers.md`에 별도 알파벳 섹션이 있음) → 아래 4곳을 **전부 동기화**해서 편집해야 함:
   1. `persona-triggers/SKILL.md`의 해당 도메인 알파벳 섹션(J/K/S/T/…) 트리거 단어군
   2. `persona-triggers/SKILL.md`의 `## B.` 표 해당 행
-  3. `sodam-persona/hooks/persona_core.md`의 해당 도메인 트리거 단어 목록
-  4. `sodam-persona/hooks/persona_marker.txt`의 해당 도메인 트리거 단어 목록
-  5. 전용 `sodam-persona/skills/persona-<이름>/SKILL.md`의 트리거 단어군 줄
+  3. `plugins/sodam-persona/hooks/persona_core.md`의 해당 도메인 트리거 단어 목록
+  4. `plugins/sodam-persona/hooks/persona_marker.txt`의 해당 도메인 트리거 단어 목록
+  5. 전용 `plugins/sodam-persona/skills/persona-<이름>/SKILL.md`의 트리거 단어군 줄
 
 ## 3단계. 편집 실행
 
@@ -42,5 +42,5 @@ description: "인터뷰 방식으로 기존 페르소나(기본 15관점 + 도�
 ## 5단계. 마무리 안내
 
 - 무엇이 어느 파일에서 어떻게 바뀌었는지 간단히 요약해서 보고한다.
-- 설치된 캐시 반영이 필요함을 안내: `claude plugin marketplace update sodam-persona` → `uninstall` → `install` → 재시작.
+- 설치된 캐시 반영이 필요함을 안내: `codex plugin marketplace upgrade sodam-persona` → `codex plugin remove sodam-persona` → `codex plugin add sodam-persona@sodam-persona` → 새 task 시작.
 - git 커밋은 바뀐 파일만 정확히 지정해 add, conventional commit. 실제 push·PR은 사용자의 명시적 승인 없이는 실행하지 않는다.
