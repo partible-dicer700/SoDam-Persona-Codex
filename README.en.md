@@ -583,6 +583,17 @@ Check #10 in `validate.mjs` automatically catches a developer's personal compute
 Listed with the most recent entries at the top. Click (or tap) an item to expand its details.
 
 <details>
+<summary><strong>2026-08-09 — Full legal/copyright/license/commercial-use audit</strong></summary>
+
+- Found that the "a disclaimer is mandatory for actionable answers" rule, which existed only for the accounting/tax (#14) and legal (#11) domains, was missing for the investor persona (#13, trading/position/timing judgment).
+- Added the required disclaimer clause to `skills/persona-investor/SKILL.md` and folded it into `validate.mjs`'s disclaimer check (#7) — **applied** (verified `node validate.mjs` passes).
+- Extending the "[mandatory disclaimer]" rule in `hooks/persona_core.md`/`hooks/persona_marker.txt` (the always-injected core) to cover #13, and adding a `license` field to `plugins/sodam-persona/.claude-plugin/plugin.json`, are **not applied** — the repository's self-protection guardrail blocks automated edits to these files. The exact text to apply was handed off in the chat report; a human needs to apply it directly in an editor.
+- Re-verified that LICENSE (the official Apache License 2.0 text), NOTICE (copyright holder, third-party attribution, trademark notice), and this document's [Legal, Copyright, License, and Commercial Use](#legal-copyright-license-and-commercial-use) section are all still accurate and consistent.
+- Re-confirmed zero dependency manifests (package.json, etc.), zero image/font files, and zero assets folders anywhere in the repository — no third-party license conflict risk.
+
+</details>
+
+<details>
 <summary><strong>2026-08-09 — Official Codex marketplace packaging</strong></summary>
 
 - Added `.agents/plugins/marketplace.json` — formally split out the marketplace definition Codex actually reads.
