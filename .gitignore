@@ -19,6 +19,7 @@ _*.js
 .todos-report.md/
 .plugin-config/
 .pair-programming-session.md
+.failure-tracker.jsonl
 .omx/
 .sodam-re/
 

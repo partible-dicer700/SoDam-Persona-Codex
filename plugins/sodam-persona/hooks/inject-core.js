@@ -6,7 +6,7 @@ let c = '';
 try {
   c = fs.readFileSync(path.join(__dirname, 'persona_core.md'), 'utf8');
 } catch (e) {
-  process.stderr.write(`[sodam-persona] persona_core.md 읽기 실패: ${e.message}\n`);
+  process.stderr.write('[sodam-persona] persona_core.md could not be loaded.\n');
 }
 const output = JSON.stringify({
   continue: true,

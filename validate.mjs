@@ -237,7 +237,7 @@ for (const file of DOC_SCAN_FILES) {
 
 // ── 10) 개인 절대경로 노출 검사 (2026-08-04 추가) ─────────────────────────
 // 근거: 커밋 9722404("개인 절대경로 노출 제거")가 reference/만 훑고, 실제 배포되는
-// skills/persona-triggers/SKILL.md의 D:\ScreenShot\는 놓쳤다(2026-08-04 실측).
+// skills/persona-triggers/SKILL.md의 개인 스크린샷 폴더 경로는 놓쳤다(2026-08-04 실측).
 // 실제 배포 플러그인과 공개 README를 검사한다. 자리표시자가 필요하면
 // `<plugin-creator-dir>`처럼 운영체제 절대경로가 아닌 표현을 사용한다.
 const PERSONAL_PATH_PATTERNS = [/[A-Za-z]:\\[^`\s]*/g, /\/(?:Users|home)\/[A-Za-z0-9_.-]+/g];
@@ -246,15 +246,24 @@ const PERSONAL_PATH_SCAN_FILES = [
   P('README.en.md'),
   ...listFiles(P(PLUGIN_ROOT), ['.md', '.js', '.json', '.txt']),
 ];
-for (const file of PERSONAL_PATH_SCAN_FILES) {
-  const text = readFileSync(file, 'utf8');
-  const rel = file.slice(ROOT.length + 1);
+function checkPersonalPaths(text, rel) {
   for (const re of PERSONAL_PATH_PATTERNS) {
     for (const m of text.matchAll(re)) {
       err(`개인 절대경로 노출 의심 (${rel}): "${m[0]}"`);
     }
   }
 }
+for (const file of PERSONAL_PATH_SCAN_FILES) {
+  const text = readFileSync(file, 'utf8');
+  const rel = file.slice(ROOT.length + 1);
+  checkPersonalPaths(text, rel);
+}
+// 정규식 구현 자체의 문자열은 오탐이므로, validator는 설명 주석만 자체 검사한다.
+const validatorComments = readFileSync(P('validate.mjs'), 'utf8')
+  .split(/\r?\n/)
+  .filter(line => line.trimStart().startsWith('//'))
+  .join('\n');
+checkPersonalPaths(validatorComments, 'validate.mjs (comments)');
 
 // ── 결과 ────────────────────────────────────────────────────────────────
 console.log(`SoDam-Persona 정합성 검사 — 관점 ${N}명 · 패턴 ${uniqLetters.length}개 · 스킬 ${nSkills}개`);

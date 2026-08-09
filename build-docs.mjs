@@ -21,8 +21,8 @@ const P = (...p) => join(ROOT, ...p);
 const THEME = P('doc-theme.html');
 
 const DOCS = [
-  { src: 'README.md', out: 'README.html', title: 'SoDam-Persona — README (한국어)' },
-  { src: 'README.en.md', out: 'README.en.html', title: 'SoDam-Persona — README (English)' },
+  { src: 'README.md', out: 'README.html', title: 'SoDam-Persona — README (한국어)', lang: 'ko' },
+  { src: 'README.en.md', out: 'README.en.html', title: 'SoDam-Persona — README (English)', lang: 'en' },
 ];
 
 try {
@@ -40,7 +40,7 @@ if (!existsSync(THEME)) {
 }
 
 let failed = 0;
-for (const { src, out, title } of DOCS) {
+for (const { src, out, title, lang } of DOCS) {
   const srcPath = P(src);
   if (!existsSync(srcPath)) {
     console.log(`❌ 원본 없음: ${src}`);
@@ -54,6 +54,7 @@ for (const { src, out, title } of DOCS) {
       '--standalone',
       '--include-in-header', THEME,
       '--metadata', `title=${title}`,
+      '--metadata', `lang=${lang}`,
       '-o', P(out),
     ]);
     console.log(`✅ ${src} → ${out}`);
