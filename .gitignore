@@ -19,6 +19,14 @@ _*.js
 .todos-report.md/
 .plugin-config/
 .pair-programming-session.md
+.omx/
+.sodam-re/
+
+# Long-horizon local working memory — session continuity only, never distributed
+# (다른 SoDam 프로젝트와 동일 관례: CHECKPOINT.md는 PUBLIC 저장소에 올리지 않음)
+CHECKPOINT.md
+AUDIT.log
+progress.txt
 
 # Internal backlog / planning notes — excluded from distribution (kept locally)
 sodam-persona/reference/v5_candidates.md
