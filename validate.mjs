@@ -151,14 +151,16 @@ try {
     err(`marketplace source 경로 없음: ${p0.source.path}`);
 } catch (e) { err(`marketplace.json 파싱 실패: ${e.message}`); }
 
-// ── 7) 면책(disclaimer) 강제 존재 — #14 회계세무·#11 법률 안전 필수 ────────
+// ── 7) 면책(disclaimer) 강제 존재 — #14 회계세무·#11 법률·#13 투자자 안전 필수 ──
 // 라이브 검증에서 #14 세무 답변이 면책을 누락(2026-07-11) → 항상-주입 레이어에
 // "면책 강제" 규칙이 실제로 존재하는지 기계 검사(드리프트 재발 차단).
+// 2026-08-09 법률/저작권 감사: #13 투자자만 이 검사 밖에 있던 것을 발견해 편입.
 const DISCLAIMER_CHECKS = [
   [pluginPath('hooks/persona_core.md'), '면책 강제'],
   [pluginPath('hooks/persona_marker.txt'), '면책 강제'],
   [pluginPath('skills/persona-accountant/SKILL.md'), '면책'],
   [pluginPath('skills/persona-lawyer/SKILL.md'), '면책'],
+  [pluginPath('skills/persona-investor/SKILL.md'), '면책'],
 ];
 for (const [f, kw] of DISCLAIMER_CHECKS) {
   if (!existsSync(P(f))) { err(`면책 검사 대상 파일 없음: ${f}`); continue; }
