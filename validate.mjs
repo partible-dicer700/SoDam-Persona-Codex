@@ -238,10 +238,15 @@ for (const file of DOC_SCAN_FILES) {
 // ── 10) 개인 절대경로 노출 검사 (2026-08-04 추가) ─────────────────────────
 // 근거: 커밋 9722404("개인 절대경로 노출 제거")가 reference/만 훑고, 실제 배포되는
 // skills/persona-triggers/SKILL.md의 D:\ScreenShot\는 놓쳤다(2026-08-04 실측).
-// sodam-persona/ 안(=실제 배포되는 플러그인 폴더)만 검사한다 — README.md 루트의
-// "C:\Users\(사용자)\..." 같은 자리표시자(placeholder) 예시는 대상 밖(오탐 방지).
+// 실제 배포 플러그인과 공개 README를 검사한다. 자리표시자가 필요하면
+// `<plugin-creator-dir>`처럼 운영체제 절대경로가 아닌 표현을 사용한다.
 const PERSONAL_PATH_PATTERNS = [/[A-Za-z]:\\[^`\s]*/g, /\/(?:Users|home)\/[A-Za-z0-9_.-]+/g];
-for (const file of listFiles(P(PLUGIN_ROOT), ['.md', '.js', '.json', '.txt'])) {
+const PERSONAL_PATH_SCAN_FILES = [
+  P('README.md'),
+  P('README.en.md'),
+  ...listFiles(P(PLUGIN_ROOT), ['.md', '.js', '.json', '.txt']),
+];
+for (const file of PERSONAL_PATH_SCAN_FILES) {
   const text = readFileSync(file, 'utf8');
   const rel = file.slice(ROOT.length + 1);
   for (const re of PERSONAL_PATH_PATTERNS) {

@@ -8,7 +8,17 @@ try {
 } catch (e) {
   process.stderr.write(`[sodam-persona] persona_core.md 읽기 실패: ${e.message}\n`);
 }
-process.stdout.write(JSON.stringify({
+const output = JSON.stringify({
   continue: true,
   hookSpecificOutput: { hookEventName: 'SessionStart', additionalContext: c }
-}));
+});
+
+// Codex sends hook metadata through stdin. Drain it before exiting so very large
+// prompts cannot surface an EPIPE/EOF in the caller even though this hook does
+// not need to inspect the payload.
+if (process.stdin.isTTY) {
+  process.stdout.write(output);
+} else {
+  process.stdin.resume();
+  process.stdin.on('end', () => process.stdout.write(output));
+}
